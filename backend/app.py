@@ -1,5 +1,7 @@
 
 # Import necessary libraries
+import os
+
 import numpy as np
 import joblib  # For loading the serialized model
 import pandas as pd  # For data manipulation
@@ -8,8 +10,8 @@ from flask import Flask, request, jsonify  # For creating the Flask API
 # Initialize Flask app with a name
 superkart_api = Flask("SuperKart")
 
-# Load the trained model
-model = joblib.load("superkart_model.joblib")
+# Load the trained model from a path that works in local and containerized runs
+model = joblib.load(superkart_model.joblib)
 
 # Define a route for the home page
 @superkart_api.get('/')
@@ -63,6 +65,7 @@ def predict_sales_batch():
     return output_dict
 
 
-# Run the Flask app in debug mode
+# Run the Flask app in a way that works on GitHub preview and forwarded ports
 if __name__ == '__main__':
-    superkart_api.run(debug=True)
+    port = int(os.environ.get('PORT', 7860))
+    superkart_api.run(host='0.0.0.0', port=port, debug=False)
